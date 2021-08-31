@@ -1,0 +1,9 @@
+# local package
+-e .
+pandas=1.3.2
+
+# external requirements
+click
+Sphinx
+coverage
+flake8
