@@ -85,3 +85,19 @@ def convert_established_year_to_actual_year(traffic_df: pd.DataFrame) -> pd.Data
 
     return traffic_df
 
+def remove_redundant_column(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Remove any column that have cardinality of 1 as it does not increase the model's
+    predictive power
+
+    Args:
+        df (pd.DataFrame)
+
+    Returns:
+        pd.DataFrame: DataFrame with columns removed
+    """
+    for column in df.columns:
+        if len(df[column].unique() == 1):
+            df.drop(column, inplace=True, axis=1)
+
+    return df
