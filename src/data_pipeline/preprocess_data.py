@@ -20,8 +20,10 @@ def load_data(traffic_data_path: Path, station_data_path: Path) -> Tuple(pd.Data
     Returns:
         Tuple (DataFrame): Tuple containing (traffic_df, station_df)
     """
+    traffic_df = pd.read_csv(traffic_data_path, compression="gzip")
+    station_df = pd.read_csv(station_data_path, compression="gzip")
 
-    return (pd.read_csv(traffic_data_path, index=False)), pd.read_csv(station_data_path, index=False))
+    return (traffic_df, station_df)
 
 def drop_remapped_column(traffic_df: pd.DataFrame, station_df: pd.DataFrame) -> Tuple(pd.DataFrame):
     """
@@ -50,6 +52,12 @@ def drop_remapped_column(traffic_df: pd.DataFrame, station_df: pd.DataFrame) -> 
 def filter_by_state_code(traffic_df: pd.DataFrame, station_df: pd.DataFrame,
                          state_code: int) -> Tuple(pd.DataFrame):
     """
+    Filter the dataframe by state code, keeping stations that belong to the specified code
+    in the state_code argument.
+
+    Refer to https://www.nrcs.usda.gov/wps/portal/nrcs/detail/?cid=nrcs143_013696
+    for specific state code
+
     Args:
         traffic_df (pd.DataFrame): DataFrame with traffic data
         station_df (pd.DataFrame): DataFrame with specific station data
@@ -62,4 +70,18 @@ def filter_by_state_code(traffic_df: pd.DataFrame, station_df: pd.DataFrame,
     traffic_df = traffic_df[traffic_df["fips_state_code"] == state_code]
 
     return traffic_df, station_df
+
+def convert_established_year_to_actual_year(traffic_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Convert the year_of_data column to a year int format. Eg. 15 --> 2015
+
+    Args:
+        traffic_df (pd.DataFrame): DataFrame with traffic data
+
+    Returns:
+        pd.DataFrame: DataFrame with year_station_established column
+    """
+    traffic_df["year_station_established"].apply(lambda x: 2000 + x if x <= 15 else 1900 + x)
+
+    return traffic_df
 
