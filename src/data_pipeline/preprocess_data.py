@@ -3,7 +3,7 @@ import pandas as pd
 import datetime as datetime
 from dateutil.relativedelta import relativedelta
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, List
 
 RAW_STATION_DATA_PATH = Path("data/raw/dot_traffic_stations_2015.txt.gz")
 RAW_TRAFFIC_DATA_PATH = Path("data/raw/dot_traffic_2015.txt.gz")
@@ -24,6 +24,24 @@ def load_data(traffic_data_path: Path, station_data_path: Path) -> Tuple(pd.Data
     station_df = pd.read_csv(station_data_path, compression="gzip")
 
     return (traffic_df, station_df)
+
+def combined_data(traffic_df: pd.DataFrame, station_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Combine the traffic and station dataframe on their common column
+
+    Args:
+        traffic_df (pd.DataFrame): DataFrame with traffic volume information
+        station_df (pd.DataFrame): DataFrame with station information
+
+    Returns:
+        pd.DataFrame
+    """
+    combined_df = traffic_df.merge(station_df,
+                                   on=["station_id", "direction_of_travel_name",
+                                       "functional_classification_name", "lane_of_travel",
+                                       "year_of_data"])
+
+    return combined_df
 
 def drop_remapped_column(traffic_df: pd.DataFrame, station_df: pd.DataFrame) -> Tuple(pd.DataFrame):
     """
@@ -99,5 +117,45 @@ def remove_redundant_column(df: pd.DataFrame) -> pd.DataFrame:
     for column in df.columns:
         if len(df[column].unique() == 1):
             df.drop(column, inplace=True, axis=1)
+
+    return df
+
+def columns_to_drop(columns_to_drop: List[str], df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Drop columns specified in columns_to_drop list
+
+    Args:
+        columns_to_drop (List[str]): List of columns to drop
+        df (pd.DataFrame): Dataframe to drop the specified columns
+
+    Returns:
+        pd.DataFrame: [description]
+    """
+    df.drop(columns_to_drop, inplace=True, axis=1)
+
+    return df
+
+def drop_future_volume_information(df: pd.DataFrame, rush_hour_type: str) -> pd.DataFrame:
+    """
+    Drop columns that will result in data leakage if not dropped as the model will have access to future data that it otherwise
+    will not have access to
+    Eg. Dropping any data after 7pm if predicting evening rush hour
+
+    Args:
+        df (pd.DataFrame): [description]
+        rush_hour_type (str): Only two strings is accepted: am or pm
+
+    Returns:
+        pd.DataFrame: [description]
+    """
+    time_column_to_drop = []
+    if rush_hour_type == "pm":
+        for column in df.columns:
+            hour = column.split("_")[-1]
+            if int(hour) > 1900:
+                time_column_to_drop.append(column)
+
+    for column in time_column_to_drop:
+        df.drop(column, inplace=True, axis=1)
 
     return df
