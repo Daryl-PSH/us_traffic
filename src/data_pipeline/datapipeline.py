@@ -1,7 +1,5 @@
-from src.data_pipeline.preprocfrom feature_engineering import create_max_volume_column, create_years_of_operation_column
-from preprocess_data import combined_data, convert_established_year_to_actual_year, drop_remapped_column, filter_by_state_code, load_data, remove_redundant_column
-ess_data import *
-from src.data_pipeline.feature_engineering import *
+from feature_engineering import *
+from preprocess_data import *
 
 from pathlib import Path
 
@@ -18,6 +16,7 @@ def preprocess_data(traffic_data_path: Path, station_data_path: Path):
     # Combine dataframe
     combined_df = combine_data(traffic_df, station_df)
 
+    # Feature engineering
     combined_df = convert_established_year_to_actual_year(combined_df)
     combined_df = create_years_of_operation_column(combined_df)
 
