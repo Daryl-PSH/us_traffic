@@ -29,6 +29,7 @@ def preprocess_data(traffic_data_path: Path, station_data_path: Path):
     logger.info("Creating new features")
     combined_df = convert_established_year_to_actual_year(combined_df)
     combined_df = create_years_of_operation_column(combined_df)
+    combined_df = create_peak_hour_traffic_volume_column(combined_df, rush_hour_type="pm")
 
     # Final column drop before encoding features
     combined_df = remove_redundant_column(combined_df)
@@ -37,7 +38,7 @@ def preprocess_data(traffic_data_path: Path, station_data_path: Path):
     columns_to_drop = ["year_station_established", "station_location",
                        "previous_station_id", "latitude", "longitude",
                        "method_of_truck_weighing_name", "fips_county_code",
-                       "direction_of_travel", "station_id"]
+                       "direction_of_travel", "station_id", "hpms_sample_identifier"]
 
     combined_df = drop_columns(columns_to_drop, combined_df)
     combined_df = drop_na_columns(combined_df)
