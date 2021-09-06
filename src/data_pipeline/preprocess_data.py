@@ -62,7 +62,7 @@ def drop_remapped_column(traffic_df: pd.DataFrame, station_df: pd.DataFrame) -> 
                                "sample_type_for_traffic_volume", "sample_type_for_truck_weight_name",
                                "sample_type_for_vehicle_classification_name", "type_of_sensor"]
 
-    traffic_df.drop(["restrictions"], inplace=True, axis=1)
+    traffic_df.drop("restrictions", inplace=True, axis=1)
     station_df.drop(station_columns_to_drop, axis=1, inplace=True)
 
     return (traffic_df, station_df)
