@@ -25,7 +25,7 @@ def load_data(traffic_data_path: Path, station_data_path: Path) -> Tuple(pd.Data
 
     return (traffic_df, station_df)
 
-def combined_data(traffic_df: pd.DataFrame, station_df: pd.DataFrame) -> pd.DataFrame:
+def combine_data(traffic_df: pd.DataFrame, station_df: pd.DataFrame) -> pd.DataFrame:
     """
     Combine the traffic and station dataframe on their common column
 
