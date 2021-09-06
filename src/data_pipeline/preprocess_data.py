@@ -151,11 +151,28 @@ def drop_future_volume_information(df: pd.DataFrame, rush_hour_type: str) -> pd.
     time_column_to_drop = []
     if rush_hour_type == "pm":
         for column in df.columns:
-            hour = column.split("_")[-1]
-            if int(hour) > 1900:
-                time_column_to_drop.append(column)
+            if column.startswith("traffic_volume"):
+                hour = column.split("_")[-1]
+                if int(hour) > 1900:
+                    time_column_to_drop.append(column)
 
     for column in time_column_to_drop:
         df.drop(column, inplace=True, axis=1)
+
+    return df
+
+def drop_na_columns(df: pd.DataFrame, threshold: float=0.5) -> pd.DataFrame:
+    """
+    Drop columns with more than 50% missing values
+
+    Args:
+        df (pd.DataFrame): Dataframe to drop columns
+        threshold (float): Threshold before the column is dropped
+
+    Returns:
+        pd.DataFrame: Dataframe with dropped columns
+    """
+    thresh = df.shape[0] * threshold
+    df = df.dropna(axis=1, thresh=thresh)
 
     return df
