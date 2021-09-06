@@ -8,7 +8,7 @@ from typing import Tuple, List
 RAW_STATION_DATA_PATH = Path("data/raw/dot_traffic_stations_2015.txt.gz")
 RAW_TRAFFIC_DATA_PATH = Path("data/raw/dot_traffic_2015.txt.gz")
 
-def load_data(traffic_data_path: Path, station_data_path: Path) -> Tuple(pd.DataFrame):
+def load_data(traffic_data_path: Path, station_data_path: Path) -> Tuple[pd.DataFrame]:
     """
     Load the data from the traffic and station data path and return them as dataframe
     for further data cleaning
