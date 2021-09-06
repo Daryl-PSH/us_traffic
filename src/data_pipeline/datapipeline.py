@@ -26,12 +26,21 @@ def preprocess_data(traffic_data_path: Path, station_data_path: Path):
     combined_df = combine_data(traffic_df, station_df)
 
     # Feature engineering
+    logger.info("Creating new features")
     combined_df = convert_established_year_to_actual_year(combined_df)
     combined_df = create_years_of_operation_column(combined_df)
 
     # Final column drop before encoding features
     combined_df = remove_redundant_column(combined_df)
-    # combined_df = drop_columns(columns_to_drop)
+    combined_df = drop_future_volume_information(combined_df, "pm")
+
+    columns_to_drop = ["year_station_established", "station_location",
+                       "previous_station_id", "latitude", "longitude",
+                       "method_of_truck_weighing_name", "fips_county_code",
+                       "direction_of_travel", "station_id"]
+
+    combined_df = drop_columns(columns_to_drop, combined_df)
+    combined_df = drop_na_columns(combined_df)
 
     combined_df.to_csv("data/interim/cleaned_data.csv")
 
