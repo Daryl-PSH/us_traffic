@@ -24,6 +24,7 @@ def preprocess_data(traffic_data_path: Path, station_data_path: Path):
     # Combine dataframe
     logger.info("Combining dataframe")
     combined_df = combine_data(traffic_df, station_df)
+    combined_df = clean_sample_type_for_vehicle_classification_column(combined_df)
 
     # Feature engineering
     logger.info("Creating new features")
@@ -38,11 +39,12 @@ def preprocess_data(traffic_data_path: Path, station_data_path: Path):
     columns_to_drop = ["year_station_established", "station_location",
                        "previous_station_id", "latitude", "longitude",
                        "method_of_truck_weighing_name", "fips_county_code",
-                       "direction_of_travel", "station_id", "hpms_sample_identifier"]
+                       "direction_of_travel", "station_id", "hpms_sample_identifier",
+                       "algorithm_of_vehicle_classification"]
 
     combined_df = drop_columns(columns_to_drop, combined_df)
     combined_df = drop_na_columns(combined_df)
 
-    combined_df.to_csv("data/interim/cleaned_data.csv")
+    combined_df.to_csv("data/interim/cleaned_data.csv", index=False)
 
 
