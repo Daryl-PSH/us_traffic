@@ -176,3 +176,25 @@ def drop_na_columns(df: pd.DataFrame, threshold: float=0.5) -> pd.DataFrame:
     df = df.dropna(axis=1, thresh=thresh)
 
     return df
+
+def clean_sample_type_for_vehicle_classification_column(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Use the mapping of:
+    N and nans to 0
+    Y, 2, T, H to 1
+    Where 0 = Station not used for Heavy Vehicle Travel Information System
+    and 1 = Station used for Heavy Vehicle Travel Information System
+
+    Args:
+        df (pd.DataFrame): [description]
+
+    Returns:
+        pd.DataFrame: [description]
+    """
+    df["sample_type_for_vehicle_classification"].replace(["H", "Y", "2", "T"], "1",inplace=True)
+    df["sample_type_for_vehicle_classification"].replace("N", "0",inplace=True)
+    df["sample_type_for_vehicle_classification"].fillna("0", inplace=True)
+    df["sample_type_for_vehicle_classification"] = pd.to_numeric(df["sample_type_for_vehicle_classification"])
+    df.drop("sample_type_for_vehicle_classification_name", axis=1, inplace=True)
+
+    return df
