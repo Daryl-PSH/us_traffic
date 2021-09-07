@@ -48,16 +48,17 @@ def create_peak_hour_traffic_volume_column(df: pd.DataFrame, rush_hour_type: str
     """
     if rush_hour_type == "pm":
         peak_hour_columns = [
-            "traffic_volume_counted_after_1400_to_1500", "traffic_volume_counted_after_1500_to_1600",
-            "traffic_volume_counted_after_1600_to_1700", "traffic_volume_counted_after_1700_to_1800",
-            "traffic_volume_counted_after_1800_to_1900"]
-        df["peak_hour_traffic_volume"] = df[peak_hour_columns].sum(axis=1)
-    
+            "traffic_volume_counted_after_1500_to_1600", "traffic_volume_counted_after_1600_to_1700",
+            "traffic_volume_counted_after_1700_to_1800", "traffic_volume_counted_after_1800_to_1900"
+            ]
+        
     elif rush_hour_type == "am":
         peak_hour_columns = [
             "traffic_volume_counted_after_0600_to_0700", "traffic_volume_counted_after_0700_to_0800",
             "traffic_volume_counted_after_0800_to_0900", "traffic_volume_counted_after_0900_to_1000"
         ]
-        df["peak_hour_traffic_volume"] = df[peak_hour_columns].sum(axis=1)
+        
+    df["peak_hour_traffic_volume"] = df[peak_hour_columns].sum(axis=1)
+    df.drop(peak_hour_columns, inplace=True, axis=1)
 
     return df
