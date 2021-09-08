@@ -1,49 +1,87 @@
-from os import remove
-from feature_engineering import *
-from preprocess_data import *
-
+import os
 from pathlib import Path
 import logging
+
+from utils import train_val_test_split
+from feature_engineering import *
+from preprocess_data import *
+from encoding import encode_categorical
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+import numpy as np
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("Data Pipeline")
 
 RAW_STATION_DATA_PATH = Path("data/raw/dot_traffic_stations_2015.txt.gz")
 RAW_TRAFFIC_DATA_PATH = Path("data/raw/dot_traffic_2015.txt.gz")
-STATE_CODE = 36
 
-def preprocess_data(traffic_data_path: Path, station_data_path: Path):
+def run_pipeline(traffic_data_path: Path, station_data_path: Path):
+    TRAIN_FILE_PATH = "data/processed/train.csv"
+    VAL_FILE_PATH = "data/processed/val.csv"
+    TEST_FILE_PATH = "data/processed/test.csv"
 
-    logger.info("Loading data...")
-    traffic_df, station_df = load_data(traffic_data_path, station_data_path)
+    if not os.path.isfile(TRAIN_FILE_PATH):
 
-    logger.info("Cleaning Data")
-    traffic_df, station_df = drop_remapped_column(traffic_df, station_df)
-    traffic_df, station_df = filter_by_state_code(traffic_df, station_df, state_code=STATE_CODE)
-    station_df = clean_sample_type_for_vehicle_classification_column(station_df)
+        logger.info("Preprocessing Data")
+        combined_df = preprocess_data(RAW_TRAFFIC_DATA_PATH, RAW_STATION_DATA_PATH)
 
-    # Combine dataframe
-    logger.info("Combining dataframe")
-    combined_df = combine_data(traffic_df, station_df)
+        logger.log("Encoding data")
+        combined_df = encode_categorical(combined_df)
 
-    # Feature engineering
-    logger.info("Creating new features")
-    combined_df = convert_established_year_to_actual_year(combined_df)
-    combined_df = create_years_of_operation_column(combined_df)
-    combined_df = create_peak_hour_traffic_volume_column(combined_df, rush_hour_type="pm")
+        logger.log("Splitting data")
+        train, val, test = train_val_test_split(combined_df, 0.8, 0.1, 0.1)
 
-    # Final column drop before encoding features
-    combined_df = remove_redundant_column(combined_df)
-    combined_df = drop_future_volume_information(combined_df, "pm")
+        train.to_csv(TRAIN_FILE_PATH, header=False)
+        val.to_csv(VAL_FILE_PATH, header=False)
+        test.to_csv(TEST_FILE_PATH, header=False)
+    
+    else:
+        logger.info("Train, val, test csv found, reading them")
+        train = pd.read_csv(TRAIN_FILE_PATH)
+        val = pd.read_csv(VAL_FILE_PATH)
+        test = pd.read_csv(TEST_FILE_PATH)
 
-    columns_to_drop = ["year_station_established", "station_location",
-                       "previous_station_id", "latitude", "longitude",
-                       "method_of_truck_weighing_name", "fips_county_code",
-                       "direction_of_travel", "station_id", "hpms_sample_identifier",
-                       "algorithm_of_vehicle_classification", "functional_classification_name"]
 
-    combined_df = drop_columns(columns_to_drop, combined_df)
-    combined_df = drop_na_columns(combined_df)
+    train_X = train.drop("peak_hour_traffic_volume", axis=1).copy()
+    train_y = train["peak_hour_traffic_volume"].copy()
 
-    combined_df.to_csv("data/interim/cleaned_data.csv", index=False)
+    val_X = val.drop("peak_hour_traffic_volume", axis=1).copy()
+    val_y = val["peak_hour_traffic_volume"].copy()
+
+    test_X = test.drop("peak_hour_traffic_volume", axis=1)
+    test_y = test["peak_hour_traffic_volume"].copy()
+
+    logger.info("Encoding and scaling data")
+    scaler = StandardScaler()
+    encoder = OneHotEncoder(handle_unknown="ignore", sparse=False)
+
+    num_columns = train_X.select_dtypes(include=np.number).columns.tolist()
+    cat_columns = train_X.select_dtypes(include="object").columns.tolist()
+
+    train_scaled_columns = scaler.fit_transform(train[num_columns])
+    train_encoded_columns = encoder.fit_transform(train[cat_columns])
+    train_processed = np.concatenate([train_scaled_columns, train_encoded_columns], axis=1)
+
+    val_scaled_columns = scaler.transform(val[num_columns])
+    val_encoded_columns = encoder.transform(val[cat_columns])
+    val_processed = np.concatenate([val_scaled_columns, val_encoded_columns], axis=1)
+
+    test_scaled_columns = scaler.transform(test[num_columns])
+    test_encoded_columns = encoder.transform(test[cat_columns])
+    test_processed = np.concatenate([test_scaled_columns, test_encoded_columns], axis=1)
+
+    return {
+        "train": [train_processed, train_y],
+        "val": [val_processed, val_y],
+        "test": [test_processed, test_y]
+    }
+
+
+
+
+
+
+
+
+
 
