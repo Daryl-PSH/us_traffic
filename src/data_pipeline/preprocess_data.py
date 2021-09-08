@@ -195,6 +195,5 @@ def clean_sample_type_for_vehicle_classification_column(df: pd.DataFrame) -> pd.
     df["sample_type_for_vehicle_classification"].replace("N", "0",inplace=True)
     df["sample_type_for_vehicle_classification"].fillna("0", inplace=True)
     df["sample_type_for_vehicle_classification"] = pd.to_numeric(df["sample_type_for_vehicle_classification"])
-    df.drop("sample_type_for_vehicle_classification_name", axis=1, inplace=True)
 
     return df
