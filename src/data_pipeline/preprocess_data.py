@@ -21,8 +21,6 @@ def preprocess_data(traffic_data_path: Path, station_data_path: Path) -> pd.Data
     Returns:
         pd.DataFrame:
     """
-
- 
     traffic_df, station_df = load_data(traffic_data_path, station_data_path)
 
     traffic_df, station_df = drop_remapped_column(traffic_df, station_df)
