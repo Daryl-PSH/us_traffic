@@ -25,15 +25,15 @@ def run_pipeline(traffic_data_path: Path, station_data_path: Path):
         logger.info("Preprocessing Data")
         combined_df = preprocess_data(RAW_TRAFFIC_DATA_PATH, RAW_STATION_DATA_PATH)
 
-        logger.log("Encoding data")
+        logger.info("Encoding data")
         combined_df = encode_categorical(combined_df)
 
-        logger.log("Splitting data")
+        logger.info("Splitting data")
         train, val, test = train_val_test_split(combined_df, 0.8, 0.1, 0.1)
 
-        train.to_csv(TRAIN_FILE_PATH, header=False)
-        val.to_csv(VAL_FILE_PATH, header=False)
-        test.to_csv(TEST_FILE_PATH, header=False)
+        train.to_csv(TRAIN_FILE_PATH, index=False)
+        val.to_csv(VAL_FILE_PATH, index=False)
+        test.to_csv(TEST_FILE_PATH, index=False)
     
     else:
         logger.info("Train, val, test csv found, reading them")
