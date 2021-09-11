@@ -44,9 +44,14 @@ class Model(ABC):
         pass
     
     @abstractmethod
-    def train(self, data):
+    def train(self, train_X, train_y):
         """
         Train the model
+
+        Args:
+            train_X (np.array): Features to be used for training
+            train_y (np.array): Target label to be used for training
+
         """
         pass
 
@@ -67,12 +72,7 @@ class RandomForest(Model):
     def build_model(self, params: Dict[str, Union[int, str]]):
         self.model = RandomForestRegressor(**params)
 
-    def train(self, data):
-        
-        train_X, train_y = data["train"][0], data["train"][1]
-        val_X, val_y = data["val"][0], data["val"][1]
-        test_X, test_y = data["test"][0], data["test"][1]
-
+    def train(self, train_X, train_y):
         self.model.fit(train_X, train_y)
 
     def predict(self, data_X) -> (np.array[int]): 
@@ -82,11 +82,7 @@ class DecisionTree(Model):
     def build_model(self, params: Dict[str, Union[int, str]]):
         self.model = DecisionTreeRegressor(**params)
 
-    def train(self, data):
-        train_X, train_y = data["train"][0], data["train"][1]
-        val_X, val_y = data["val"][0], data["val"][1]
-        test_X, test_y = data["test"][0], data["test"][1]
-
+    def train(self, train_X, train_y):
         self.model.fit(train_X, train_y)
 
     def predict(self, data_X):
