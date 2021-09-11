@@ -1,7 +1,6 @@
 import pandas as pd
 from src.data_pipeline.feature_engineering import *
 
-import datetime as datetime
 from dateutil.relativedelta import relativedelta
 from pathlib import Path
 from typing import Tuple, List
