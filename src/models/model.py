@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Union
+from typing import Dict, Union, Literal
 
 from ..data_pipeline.datapipeline import *
 from pathlib import Path
@@ -51,7 +51,7 @@ class Model(ABC):
         pass
 
     @abstractmethod
-    def predict(self, data_X: np.array):
+    def predict(self, data_X: np.array) -> np.array[int]:
         """
         Use model for prediction
 
@@ -59,7 +59,7 @@ class Model(ABC):
             data_X (np.array): Data to be used for prediction
 
         Returns:
-            predictions (np.array): Prediction of the model
+            predictions (np.array): Prediction of the model 
         """
         pass
 
@@ -75,7 +75,7 @@ class RandomForest(Model):
 
         self.model.fit(train_X, train_y)
 
-    def predict(self, data_X):
+    def predict(self, data_X) -> (np.array[int]): 
         return np.round(self.model.predict(data_X))
 
 class DecisionTree(Model):
