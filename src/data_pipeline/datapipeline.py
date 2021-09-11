@@ -2,10 +2,10 @@ import os
 from pathlib import Path
 import logging
 
-from utils import train_val_test_split
-from feature_engineering import *
-from preprocess_data import *
-from encoding import encode_categorical
+from src.data_pipeline.utils import train_val_test_split
+from src.data_pipeline.feature_engineering import *
+from src.data_pipeline.preprocess_data import *
+from src.data_pipeline.encoding import encode_categorical
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 import numpy as np
 
@@ -25,15 +25,15 @@ def run_pipeline(traffic_data_path: Path, station_data_path: Path):
         logger.info("Preprocessing Data")
         combined_df = preprocess_data(RAW_TRAFFIC_DATA_PATH, RAW_STATION_DATA_PATH)
 
-        logger.log("Encoding data")
+        logger.info("Encoding data")
         combined_df = encode_categorical(combined_df)
 
-        logger.log("Splitting data")
+        logger.info("Splitting data")
         train, val, test = train_val_test_split(combined_df, 0.8, 0.1, 0.1)
 
-        train.to_csv(TRAIN_FILE_PATH, header=False)
-        val.to_csv(VAL_FILE_PATH, header=False)
-        test.to_csv(TEST_FILE_PATH, header=False)
+        train.to_csv(TRAIN_FILE_PATH, index=False)
+        val.to_csv(VAL_FILE_PATH, index=False)
+        test.to_csv(TEST_FILE_PATH, index=False)
     
     else:
         logger.info("Train, val, test csv found, reading them")
