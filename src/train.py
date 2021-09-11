@@ -27,34 +27,37 @@ def experiment():
     val_X, val_y = data["val"][0], data["val"][1]
     test_X, test_y = data["test"][0], data["test"][1]
 
-    logger.info("Building Model")
-    model = ModelFactory(model_to_be_used, model_params)
+    logger.info("Building model")
+    model_factory = ModelFactory()
+    model = model_factory.create_model(model_to_be_used, model_params)
 
-    logger.info("Training Model")
-    model.train(data)
+    logger.info("Training model, might take a while")
+    model.train(train_X, train_y)
 
     logger.info("Performing predictions + evaluations")
     train_predictions = model.predict(train_X)
     val_predictions = model.predict(val_X)
     test_predictions = model.predict(test_X)
 
-    train_score = model.evaluate(train_X, train_y, metrics="rmse")
-    val_score = model.evaluate(val_X, val_y, metrics="rmse")
-    test_score  = model.evaluate(test_X, test_y, metrics="rmse")
+    train_score = model.evaluate(train_y, train_predictions, metrics="rmse")
+    val_score = model.evaluate(val_y, val_predictions, metrics="rmse")
+    test_score  = model.evaluate(test_y, test_predictions, metrics="rmse")
 
+    logger.info("Saving and logging results")
     model.save_model()
-    model.log_results()
+    model.log_results(train_score, val_score, test_score)
 
 
 def load_conf(conf_path: Path) -> Dict[str, Union[str, int]]:
     """
     Load configuration file to be used
     """
-    with open("conf/model.yaml", "r") as stream:
+    with open(conf_path, "r") as stream:
         try:
             conf = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
             print(exc)
+    return conf
 
 if __name__ == "__main__":
     experiment()
