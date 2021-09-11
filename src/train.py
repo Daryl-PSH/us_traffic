@@ -42,8 +42,9 @@ def experiment():
     val_score = model.evaluate(val_X, val_y, metrics="rmse")
     test_score  = model.evaluate(test_X, test_y, metrics="rmse")
 
-def save_model(model):
-    pass
+    model.save_model()
+    model.log_results()
+
 
 def load_conf(conf_path: Path) -> Dict[str, Union[str, int]]:
     """
@@ -54,17 +55,6 @@ def load_conf(conf_path: Path) -> Dict[str, Union[str, int]]:
             conf = yaml.safe_load(stream)
         except yaml.YAMLError as exc:
             print(exc)
-
-def log_results(train_score: float, val_score: float, test_score: float):
-    """
-    Log the model's evaluation results in a yaml file.
-
-    Args:
-        train_score (float): Train score result
-        val_score (float): Val score result
-        test_score (float): Test score result
-    """
-    pass
 
 if __name__ == "__main__":
     experiment()
