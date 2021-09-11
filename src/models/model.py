@@ -131,7 +131,7 @@ class DecisionTree(Model):
         year, month, day, hour, minute = cur.year, cur.month, cur.day, cur.hour, cur.minute
         self.SAVE_DIR = f"model/RF_{year}_{month}_{day}_{hour}_{minute}"
         os.mkdir(self.SAVE_DIR)
-        dump(self.model, "rf.joblib")
+        dump(self.model, "dt.joblib")
 
 
 
