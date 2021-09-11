@@ -1,11 +1,13 @@
 US Traffic Prediction
 ==============================
+
 ## Problem Statement
 
 Predict traffic volume during rush hour in New York. (Rush hour is defined to be from 3pm to 7pm) to be used for traffic planning by relevant entities
 
-Project Organization
-------------
+--------
+## Project Organization
+
 
     ├── README.md          <- The top-level README for developers using this project.
     ├── data
@@ -35,5 +37,20 @@ Project Organization
     │       └── preprocess_data.py
     └── download_data.sh   <- Shell script for downloading raw data
 
+--------
+
+Usage
+==============================
+## 1. Setting Up
+
+## 2. Configuration
+
+## 3. Training
 
 --------
+Improvements
+==============================
+
+References
+==============================
+
