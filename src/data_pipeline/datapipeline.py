@@ -2,10 +2,10 @@ import os
 from pathlib import Path
 import logging
 
-from utils import train_val_test_split
-from feature_engineering import *
-from preprocess_data import *
-from encoding import encode_categorical
+from src.data_pipeline.utils import train_val_test_split
+from src.data_pipeline.feature_engineering import *
+from src.data_pipeline.preprocess_data import *
+from src.data_pipeline.encoding import encode_categorical
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 import numpy as np
 

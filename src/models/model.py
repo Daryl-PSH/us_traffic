@@ -67,7 +67,7 @@ class Model(ABC):
         pass
 
     @abstractmethod
-    def predict(self, data_X: np.array) -> np.array[int]:
+    def predict(self, data_X: np.array) -> np.array:
         """
         Use model for prediction
 
@@ -106,7 +106,7 @@ class RandomForest(Model):
     def train(self, train_X, train_y):
         self.model.fit(train_X, train_y)
 
-    def predict(self, data_X) -> (np.array[int]): 
+    def predict(self, data_X) -> np.array: 
         return np.round(self.model.predict(data_X))
 
     def save_model(self):
@@ -123,7 +123,7 @@ class DecisionTree(Model):
     def train(self, train_X, train_y):
         self.model.fit(train_X, train_y)
 
-    def predict(self, data_X):
+    def predict(self, data_X) -> np.array:
         return np.round(self.model.predict(data_X))
 
     def save_model(self):
