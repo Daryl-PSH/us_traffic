@@ -1,8 +1,14 @@
 from typing import Dict, Union
+import yaml
+
 from src.models.model import *
 
 class ModelFactory:
-    def create_model(model_type: str, params: Dict[str, Union[int, str]]):
+
+    def __init__(self):
+        self._load_conf()
+
+    def create_model(self, model_type: str, params: Dict[str, Union[int, str]]):
         if model_type == "random_forest":
             return RandomForest(params)
 
