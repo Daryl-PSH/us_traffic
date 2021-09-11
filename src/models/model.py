@@ -2,14 +2,15 @@ from abc import ABC, abstractmethod
 from typing import Dict, Union, Literal
 from datetime import datetime
 import os
-from joblib import dump, load
 import yaml
+from pathlib import Path
 
 from ..data_pipeline.datapipeline import *
-from pathlib import Path
+
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
 from sklearn.tree import DecisionTreeRegressor
+from joblib import dump, load
 
 class Model(ABC):
 
@@ -90,12 +91,12 @@ class Model(ABC):
         """
         results = {
             "Model": str(type(self.model)),
-            "Train": train_score,
-            "Val": val_score,
-            "Test": test_score
+            "Train": float(train_score),
+            "Val": float(val_score),
+            "Test": float(test_score)
         }
 
-        with open(os.path.join(self.SAVE_DIR, "results.yaml", "w")) as file:
+        with open(os.path.join(self.SAVE_DIR, "results.yaml"), "w") as file:
             yaml.dump(results, file)
 
 
@@ -110,11 +111,11 @@ class RandomForest(Model):
         return np.round(self.model.predict(data_X))
 
     def save_model(self):
-        cur = datetime.now()
+        cur = datetime.datetime.now()
         year, month, day, hour, minute = cur.year, cur.month, cur.day, cur.hour, cur.minute
-        self.SAVE_DIR = f"model/RF_{year}_{month}_{day}_{hour}_{minute}"
+        self.SAVE_DIR = f"models/RF_{year}_{month}_{day}_{hour}_{minute}"
         os.mkdir(self.SAVE_DIR)
-        dump(self.model, "rf.joblib")
+        dump(self.model, os.path.join(self.SAVE_DIR, "rf.joblib"))
 
 class DecisionTree(Model):
     def build_model(self, params: Dict[str, Union[int, str]]):
@@ -127,11 +128,11 @@ class DecisionTree(Model):
         return np.round(self.model.predict(data_X))
 
     def save_model(self):
-        cur = datetime.now()
+        cur = datetime.datetime.now()
         year, month, day, hour, minute = cur.year, cur.month, cur.day, cur.hour, cur.minute
-        self.SAVE_DIR = f"model/RF_{year}_{month}_{day}_{hour}_{minute}"
+        self.SAVE_DIR = f"models/DT_{year}_{month}_{day}_{hour}_{minute}"
         os.mkdir(self.SAVE_DIR)
-        dump(self.model, "dt.joblib")
+        dump(self.model, os.path.join(self.SAVE_DIR, "dt.joblib"))
 
 
 
