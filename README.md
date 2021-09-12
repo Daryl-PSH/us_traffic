@@ -40,6 +40,8 @@ Predict traffic volume during rush hour in New York. (Rush hour is defined to be
 --------
 Architecture
 ==============================
+<img src="images/architecture.png">
+
 Usage
 ==============================
 ## 1. Setting Up
@@ -72,9 +74,12 @@ python -m src.train
 
 2. A time stamped folder will be created in the ```models``` folder along with the type of model that is being trained. Within the specific folder itself, there will be a joblib file that stores the model and also a yaml file containing the evaluation results of the model that was trained (Defaults to RMSE) 
 
+Scalability
+==============================
+1. Adding new model can be easily done by inheriting the base model class from model.py and writing the abstract methods specified. 
 
+2. Rapid interations of hyperparameters and model architecutre can also be done by simply customizing the values in the config files without modifying the source code itself
 
---------
 Improvements
 ==============================
 1. Add in more models to be used in the config file
