@@ -77,7 +77,12 @@ python -m src.train
 --------
 Improvements
 ==============================
+1. Add in more models to be used in the config file
+2. Implement Docker so that running of the scripts will be system agnostic
+3. Experiment with heavier architectures such as Neural Networks
+4. Implement automation of hyperparameter optimization techiniques such as GridSearch or RandomSearch.
+
 
 References
 ==============================
-
+1. Dataset: https://www.kaggle.com/jboysen/us-traffic-2015
