@@ -38,14 +38,41 @@ Predict traffic volume during rush hour in New York. (Rush hour is defined to be
     └── download_data.sh   <- Shell script for downloading raw data
 
 --------
-
+Architecture
+==============================
 Usage
 ==============================
 ## 1. Setting Up
 
+1. Create a virtual environment of your choice (Anaconda or virtualenv) and run the following command in the root directory (in your virtual environment) to install the required dependencies
+
+```
+pip install -r requirements.txt
+```
+
+2. As the data is relatively large, run the shell script in the root directory called "download_data.sh" to download the data into the ```data/raw/``` folder
+
+```
+sh download_data.sh
+```
+
+3. Check if you have two gz files in the ```data/raw/``` folder called ```dot_traffic_2015.txt.gz``` and ```dot_traffic_stations_2015.txt.gz```
+
 ## 2. Configuration
 
+1. To train the model, you will only have to modify the values and hyperparameters in ```conf/model.yaml``` (Currently only ```decision_tree``` and ```random_forest```)
+
 ## 3. Training
+
+1. Run the following command in the root directory to train the model and it will commence training using the parameters that was set in ```conf/model.yaml``` from earlier.
+
+```
+python -m src.train
+```
+
+2. A time stamped folder will be created in the ```models``` folder along with the type of model that is being trained. Within the specific folder itself, there will be a joblib file that stores the model and also a yaml file containing the evaluation results of the model that was trained (Defaults to RMSE) 
+
+
 
 --------
 Improvements
