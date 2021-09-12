@@ -86,6 +86,7 @@ Improvements
 2. Implement Docker so that running of the scripts will be system agnostic
 3. Experiment with heavier architectures such as Neural Networks
 4. Implement automation of hyperparameter optimization techiniques such as GridSearch or RandomSearch.
+5. Allow ease of switching between training a model that predicts evening rush hour and morning rush hour.
 
 
 References
