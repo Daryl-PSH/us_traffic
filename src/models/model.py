@@ -96,12 +96,14 @@ class Model(ABC):
             "Test": float(test_score)
         }
 
+        to_log = {**results, **self.params}
         with open(os.path.join(self.SAVE_DIR, "results.yaml"), "w") as file:
-            yaml.dump(results, file)
+            yaml.dump(to_log, file)
 
 
 class RandomForest(Model):
     def build_model(self, params: Dict[str, Union[int, str]]):
+        self.params = params            
         self.model = RandomForestRegressor(**params)
 
     def train(self, train_X, train_y):
@@ -119,6 +121,7 @@ class RandomForest(Model):
 
 class DecisionTree(Model):
     def build_model(self, params: Dict[str, Union[int, str]]):
+        self.params = params        
         self.model = DecisionTreeRegressor(**params)
 
     def train(self, train_X, train_y):
